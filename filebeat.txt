@@ -1,0 +1,36 @@
+# ============================== Filebeat Inputs ===============================
+ 
+filebeat.inputs:
+ 
+- type: log
+  enabled: true
+  paths:
+     - "/var/logs/*.*"
+
+filebeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+
+processors:
+  - drop_fields:
+      fields: ["ecs.version", "agent.version", "agent.type", "agent.id", "agent.hostname", "input.type","agent.name","agent.ephemeral_id","fields.apache","host.name"]
+
+setup.kibana:
+  host: "10.160.217.38:6601"
+ 
+output.elasticsearch:
+  hosts: '${ELASTICSEARCH_HOSTS:10.160.217.38:9200}'
+  index: "sit-preferencelog-%{+yyyy.MM.dd}"
+  username: "elastic" 
+  password: "Traiadminprod@2019"
+  
+# ================================== Template ==================================
+
+setup.template.name: "sit-preferencelog"
+setup.template.pattern: "sit-preferencelog-*"
+setup.dashboards.index: "sit-preferencelog-*"
+setup.ilm.enabled: false
+setup.template.enabled: true
+setup.template.settings:
+  index.number_of_shards: 1
